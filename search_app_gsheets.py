@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Add RTL CSS styling with compact design
+# Add RTL CSS styling with ultra-compact design
 st.markdown("""
 <style>
     /* RTL for entire app */
@@ -23,73 +23,75 @@ st.markdown("""
         background: #ffffff;
     }
     
-    /* Minimal spacing */
+    /* Ultra-minimal spacing */
     .block-container {
-        padding-top: 0.5rem;
+        padding-top: 0.2rem;
         padding-bottom: 0rem;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-left: 0.3rem;
+        padding-right: 0.3rem;
         max-width: 100%;
     }
     
-    /* Main title styling - smaller to prevent cutoff */
-    h1 {
-        color: #2c3e50;
-        font-size: 1.3rem !important;
-        font-weight: bold !important;
-        text-align: center !important;
-        padding: 0.2rem 0;
-        margin: 0 !important;
-        line-height: 1.2 !important;
+    /* Hide title completely */
+    h1, h2, h3 {
+        display: none !important;
     }
     
     /* RTL for all text elements */
-    .stMarkdown, .stText, p, h1, h2, h3, h4, h5, h6, label, div {
+    .stMarkdown, .stText, p, label, div {
         direction: rtl;
         text-align: right;
     }
     
-    /* Remove extra margins */
+    /* Minimal margins */
     p {
-        margin: 0.2rem 0 !important;
+        margin: 0.1rem 0 !important;
     }
     
-    /* Compact input fields */
+    /* Ultra-compact input fields */
     .stTextInput > div > div > input {
         direction: rtl;
         text-align: right;
         border-radius: 2px;
         border: 1px solid #3498db;
-        padding: 0.3rem 0.5rem;
+        padding: 0.25rem 0.4rem;
         font-size: 0.85rem;
-        height: 2rem;
+        height: 1.8rem;
     }
     
     .stTextInput > label {
-        font-size: 0.8rem !important;
+        font-size: 0.75rem !important;
+        margin-bottom: 0.05rem !important;
+    }
+    
+    .stTextInput {
         margin-bottom: 0.1rem !important;
     }
     
-    /* Compact selectbox */
+    /* Ultra-compact selectbox */
     .stSelectbox [data-baseweb="select"] {
         border-radius: 2px;
         border: 1px solid #3498db;
-        min-height: 2rem !important;
+        min-height: 1.8rem !important;
     }
     
     .stSelectbox > label {
-        font-size: 0.8rem !important;
+        font-size: 0.75rem !important;
+        margin-bottom: 0.05rem !important;
+    }
+    
+    .stSelectbox {
         margin-bottom: 0.1rem !important;
     }
     
-    /* Compact square buttons */
+    /* Ultra-compact square buttons */
     .stButton > button {
         direction: rtl;
         border-radius: 2px;
         font-weight: 600;
-        font-size: 0.8rem;
-        padding: 0.3rem 0.6rem;
-        height: 2rem;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        height: 1.8rem;
         border: none;
     }
     
@@ -111,19 +113,19 @@ st.markdown("""
         color: white;
     }
     
-    /* Compact messages */
+    /* Ultra-compact messages */
     .stAlert {
         direction: rtl;
         text-align: right;
         border-radius: 2px;
-        padding: 0.3rem;
-        margin: 0.2rem 0;
-        font-size: 0.85rem;
+        padding: 0.25rem;
+        margin: 0.15rem 0;
+        font-size: 0.8rem;
     }
     
-    /* Divider */
+    /* Minimal divider */
     hr {
-        margin: 0.3rem 0;
+        margin: 0.2rem 0;
         border: none;
         height: 1px;
         background: #bdc3c7;
@@ -134,14 +136,24 @@ st.markdown("""
         direction: rtl;
     }
     
-    /* Minimal spacing between elements */
+    /* Ultra-minimal spacing between elements */
     .element-container {
-        margin: 0.1rem 0 !important;
+        margin: 0.05rem 0 !important;
     }
     
     .row-widget {
-        gap: 0.2rem !important;
+        gap: 0.15rem !important;
     }
+    
+    /* Remove vertical gaps */
+    div[data-testid="stVerticalBlock"] > div {
+        gap: 0.1rem !important;
+    }
+    
+    /* Hide Streamlit branding and menu */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -263,25 +275,25 @@ def search_person(df, search_term):
     return df[mask]
 
 def display_person_details(row):
-    """Display person details in a compact format - removed תז and מספר אישי"""
+    """Display person details in ultra-compact format"""
     # Check if expired for color coding
     expiration_date = parse_date(row.get('תוקף', ''))
     is_expired_flag = expiration_date and is_expired(expiration_date)
     status_color = "#e74c3c" if is_expired_flag else "#27ae60"
     bg_color = "#ecf0f1"
-    text_color = "#2c3e50"  # Dark text for readability
+    text_color = "#2c3e50"
     
     st.markdown(f"""
-    <div style='background: {bg_color}; padding: 0.5rem; border-radius: 2px; margin: 0.3rem 0; border-right: 4px solid {status_color};'>
+    <div style='background: {bg_color}; padding: 0.3rem; border-radius: 2px; margin: 0.2rem 0; border-right: 3px solid {status_color};'>
         <table style='width: 100%; border-collapse: collapse; color: {text_color};'>
             <tr>
-                <td style='padding: 0.2rem; width: 50%; vertical-align: top; font-size: 0.9rem;'>
-                    <div><strong>שם מלא:</strong> {row['שם מלא']}</div>
+                <td style='padding: 0.15rem; width: 50%; vertical-align: top; font-size: 0.8rem;'>
+                    <div><strong>שם:</strong> {row['שם מלא']}</div>
                     <div><strong>תפקיד:</strong> {row['תפקיד']}</div>
                 </td>
-                <td style='padding: 0.2rem; width: 50%; vertical-align: top; font-size: 0.9rem;'>
-                    <div><strong>מספר רכב:</strong> {row['מספר רכב']}</div>
-                    <div><strong>סוג רכב:</strong> {row['סוג רכב']}</div>
+                <td style='padding: 0.15rem; width: 50%; vertical-align: top; font-size: 0.8rem;'>
+                    <div><strong>רכב:</strong> {row['מספר רכב']}</div>
+                    <div><strong>סוג:</strong> {row['סוג רכב']}</div>
                     <div><strong>תוקף:</strong> <span style='color: {status_color}; font-weight: bold;'>{row['תוקף']}</span></div>
                 </td>
             </tr>
@@ -291,8 +303,7 @@ def display_person_details(row):
 
 # Main app
 def main():
-    st.title("אישורי כניסה")
-    st.markdown("---")
+    # No title - saves space and avoids cutoff issues
     
     # Initialize Google client
     client = get_google_client()
@@ -326,8 +337,6 @@ def main():
     if df is None:
         st.error("לא ניתן לטעון נתונים מה-Google Sheet")
         return
-    
-    st.success(f"✅ נטענו {len(df)} רשומות מ-Google Sheet")
     
     # Search input - compact design
     col1, col2 = st.columns([4, 1])
