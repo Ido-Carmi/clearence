@@ -7,12 +7,13 @@ import json
 
 # Set page config
 st.set_page_config(
-    page_title="חיפוש במערכת",
-    page_icon="🔍",
-    layout="wide"
+    page_title="אישורי כניסה",
+    page_icon="🔐",
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-# Add RTL CSS styling
+# Add RTL CSS styling with compact design
 st.markdown("""
 <style>
     /* RTL for entire app */
@@ -28,21 +29,18 @@ st.markdown("""
         padding-bottom: 0rem;
         padding-left: 0.5rem;
         padding-right: 0.5rem;
+        max-width: 100%;
     }
     
-    /* Main title styling */
+    /* Main title styling - smaller to prevent cutoff */
     h1 {
         color: #2c3e50;
-        font-size: 1.5rem !important;
+        font-size: 1.3rem !important;
         font-weight: bold !important;
         text-align: center !important;
-        padding: 0.3rem 0;
+        padding: 0.2rem 0;
         margin: 0 !important;
-    }
-    
-    h2, h3, h4 {
-        margin: 0.2rem 0 !important;
-        padding: 0 !important;
+        line-height: 1.2 !important;
     }
     
     /* RTL for all text elements */
@@ -51,12 +49,12 @@ st.markdown("""
         text-align: right;
     }
     
-    /* Remove extra margins and padding */
+    /* Remove extra margins */
     p {
         margin: 0.2rem 0 !important;
     }
     
-    /* RTL for input fields - compact and square */
+    /* Compact input fields */
     .stTextInput > div > div > input {
         direction: rtl;
         text-align: right;
@@ -67,27 +65,12 @@ st.markdown("""
         height: 2rem;
     }
     
-    .stTextInput > div > div > input:focus {
-        border-color: #2980b9;
-        box-shadow: none;
-    }
-    
     .stTextInput > label {
         font-size: 0.8rem !important;
         margin-bottom: 0.1rem !important;
     }
     
-    .stTextInput {
-        margin-bottom: 0.2rem !important;
-    }
-    
-    /* RTL for selectbox - compact and square */
-    .stSelectbox > div > div > div {
-        direction: rtl;
-        text-align: right;
-        border-radius: 2px;
-    }
-    
+    /* Compact selectbox */
     .stSelectbox [data-baseweb="select"] {
         border-radius: 2px;
         border: 1px solid #3498db;
@@ -99,11 +82,7 @@ st.markdown("""
         margin-bottom: 0.1rem !important;
     }
     
-    .stSelectbox {
-        margin-bottom: 0.2rem !important;
-    }
-    
-    /* Buttons styling - compact and square */
+    /* Compact square buttons */
     .stButton > button {
         direction: rtl;
         border-radius: 2px;
@@ -112,32 +91,27 @@ st.markdown("""
         padding: 0.3rem 0.6rem;
         height: 2rem;
         border: none;
-        transition: opacity 0.2s;
     }
     
-    .stButton > button:hover {
-        opacity: 0.85;
-    }
-    
-    /* Primary button - solid blue */
+    /* Primary button */
     .stButton > button[kind="primary"] {
         background: #3498db;
         color: white;
     }
     
-    /* Secondary button - solid red */
+    /* Secondary button */
     .stButton > button[kind="secondary"] {
         background: #e74c3c;
         color: white;
     }
     
-    /* Default button - solid gray */
+    /* Default button */
     .stButton > button {
         background: #95a5a6;
         color: white;
     }
     
-    /* Success/Error/Warning messages - compact */
+    /* Compact messages */
     .stAlert {
         direction: rtl;
         text-align: right;
@@ -147,41 +121,7 @@ st.markdown("""
         font-size: 0.85rem;
     }
     
-    /* Success message - solid green */
-    .stSuccess {
-        background: #27ae60;
-        color: white;
-        border: none;
-    }
-    
-    /* Warning message - solid orange */
-    .stWarning {
-        background: #f39c12;
-        color: white;
-        border: none;
-    }
-    
-    /* Error message - solid red */
-    .stError {
-        background: #e74c3c;
-        color: white;
-        border: none;
-    }
-    
-    /* Info boxes - solid blue */
-    .stInfo {
-        direction: rtl;
-        text-align: right;
-        border-radius: 2px;
-        background: #3498db;
-        color: white;
-        border: none;
-        padding: 0.3rem;
-        margin: 0.2rem 0;
-        font-size: 0.85rem;
-    }
-    
-    /* Divider - simple line */
+    /* Divider */
     hr {
         margin: 0.3rem 0;
         border: none;
@@ -194,18 +134,12 @@ st.markdown("""
         direction: rtl;
     }
     
-    /* Remove column gaps */
-    .row-widget {
-        gap: 0.2rem !important;
-    }
-    
-    /* Minimal sections */
+    /* Minimal spacing between elements */
     .element-container {
         margin: 0.1rem 0 !important;
     }
     
-    /* Reduce vertical space between elements */
-    div[data-testid="stVerticalBlock"] > div {
+    .row-widget {
         gap: 0.2rem !important;
     }
 </style>
@@ -241,22 +175,10 @@ def get_google_client():
         return None
 
 def get_sheet_url():
-    """Get Google Sheet URL from secrets"""
+    """Get Google Sheet URL from secrets or user input"""
     if 'google_sheet_url' in st.secrets:
         return st.secrets['google_sheet_url']
-    else:
-        st.error("⚠️ לא נמצא URL של Google Sheet ב-secrets")
-        st.info("""
-        אנא הוסף את ה-URL ב-secrets:
-        
-        1. צור תיקייה: `.streamlit`
-        2. צור קובץ: `secrets.toml`
-        3. הוסף את השורה:
-        ```
-        google_sheet_url = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit"
-        ```
-        """)
-        return None
+    return None
 
 @st.cache_data(ttl=10)
 def load_data_from_sheet(_client, sheet_url):
@@ -300,6 +222,16 @@ def load_data_from_sheet(_client, sheet_url):
         st.error(f"שגיאה בטעינת הנתונים: {str(e)}")
         return None, None
 
+def delete_row_from_sheet(worksheet, row_number):
+    """Delete a specific row from Google Sheet"""
+    try:
+        # Row number is 1-indexed and includes header
+        worksheet.delete_rows(row_number + 2)  # +2 because: +1 for header, +1 for 1-indexing
+        return True
+    except Exception as e:
+        st.error(f"שגיאה במחיקת השורה: {str(e)}")
+        return False
+
 def parse_date(date_str):
     """Parse date string in DD/MM/YYYY format"""
     try:
@@ -318,31 +250,22 @@ def is_expired(expiration_date):
     current_date = datetime.now()
     return expiration_date < current_date
 
-def search_person(df, search_term, search_column):
-    """Search for a person in a specific column"""
+def search_person(df, search_term):
+    """Search for a person by name or vehicle number"""
     search_term = str(search_term).strip()
     
-    # Map display names to actual column names
-    column_mapping = {
-        'שם מלא': 'שם מלא',
-        'מספר אישי': 'מספר אישי',
-        'תעודת זהות': 'תז',
-        'מספר רכב': 'מספר רכב'
-    }
+    # Search in relevant columns - removed תז and מספר אישי
+    mask = (
+        df['שם מלא'].astype(str).str.contains(search_term, case=False, na=False) |
+        df['מספר רכב'].astype(str).str.contains(search_term, case=False, na=False)
+    )
     
-    actual_column = column_mapping.get(search_column, search_column)
-    
-    # Search only in the selected column
-    if actual_column in df.columns:
-        mask = df[actual_column].astype(str).str.contains(search_term, case=False, na=False)
-        return df[mask]
-    else:
-        return pd.DataFrame()  # Return empty dataframe if column not found
+    return df[mask]
 
 def display_person_details(row):
-    """Display person details in a compact format"""
+    """Display person details in a compact format - removed תז and מספר אישי"""
     # Check if expired for color coding
-    expiration_date = parse_date(row['תוקף'])
+    expiration_date = parse_date(row.get('תוקף', ''))
     is_expired_flag = expiration_date and is_expired(expiration_date)
     status_color = "#e74c3c" if is_expired_flag else "#27ae60"
     bg_color = "#ecf0f1"
@@ -354,8 +277,6 @@ def display_person_details(row):
             <tr>
                 <td style='padding: 0.2rem; width: 50%; vertical-align: top; font-size: 0.9rem;'>
                     <div><strong>שם מלא:</strong> {row['שם מלא']}</div>
-                    <div><strong>תעודת זהות:</strong> {row['תז']}</div>
-                    <div><strong>מספר אישי:</strong> {row['מספר אישי']}</div>
                     <div><strong>תפקיד:</strong> {row['תפקיד']}</div>
                 </td>
                 <td style='padding: 0.2rem; width: 50%; vertical-align: top; font-size: 0.9rem;'>
@@ -389,7 +310,15 @@ def main():
     sheet_url = get_sheet_url()
     
     if sheet_url is None:
-        return
+        st.warning("⚠️ לא הוגדר URL של Google Sheet")
+        sheet_url = st.text_input(
+            "הזן את כתובת ה-Google Sheet:",
+            placeholder="https://docs.google.com/spreadsheets/d/..."
+        )
+        
+        if not sheet_url:
+            st.info("💡 הזן את כתובת ה-Google Sheet כדי להמשיך")
+            return
     
     # Load data
     df, worksheet = load_data_from_sheet(client, sheet_url)
@@ -398,53 +327,70 @@ def main():
         st.error("לא ניתן לטעון נתונים מה-Google Sheet")
         return
     
-    # Search input with column selection
-    col1, col2, col3, col4 = st.columns([2, 2, 1, 1])
+    st.success(f"✅ נטענו {len(df)} רשומות מ-Google Sheet")
+    
+    # Search input - compact design
+    col1, col2 = st.columns([4, 1])
     
     with col1:
-        search_column = st.selectbox(
-            "עמודה:",
-            options=['שם מלא', 'מספר אישי', 'תעודת זהות', 'מספר רכב'],
-            index=0
+        search_term = st.text_input(
+            "חיפוש:",
+            placeholder="שם או מספר רכב...",
+            label_visibility="collapsed"
         )
     
     with col2:
-        search_term = st.text_input(
-            "חיפוש:",
-            placeholder=f"חפש לפי {search_column}...",
-            key="search_input"
-        )
-    
-    with col3:
         search_button = st.button("🔍 חפש", type="primary", use_container_width=True)
     
-    with col4:
+    if not search_button and not search_term:
         refresh_button = st.button("🔄 רענן", use_container_width=True)
-    
-    if refresh_button:
-        st.cache_data.clear()
-        st.rerun()
+        if refresh_button:
+            st.cache_data.clear()
+            st.rerun()
     
     # Perform search
     if search_button and search_term:
-        results = search_person(df, search_term, search_column)
+        results = search_person(df, search_term)
         
         if len(results) == 0:
-            st.markdown("""
-            <div style='text-align: center; padding: 0.4rem; background: #95a5a6; border-radius: 2px; margin: 0.2rem 0; color: white; font-size: 0.85rem;'>
-                לא נמצאו תוצאות
-            </div>
-            """, unsafe_allow_html=True)
+            st.warning("לא נמצאו תוצאות")
         else:
-            st.markdown(f"""
-            <div style='text-align: center; padding: 0.4rem; background: #27ae60; border-radius: 2px; margin: 0.2rem 0; color: white; font-size: 0.85rem;'>
-                נמצאו {len(results)} תוצאות
-            </div>
-            """, unsafe_allow_html=True)
+            st.success(f"נמצאו {len(results)} תוצאות")
             
-            # Display all results (expired rows already deleted automatically)
+            # Check each result for expiration
+            rows_to_delete = []
+            
             for idx, row in results.iterrows():
-                display_person_details(row)
+                expiration_date = parse_date(row['תוקף'])
+                
+                # Check if expired
+                if expiration_date and is_expired(expiration_date):
+                    st.error("⚠️ התוקף פג - הרשומה תימחק")
+                    rows_to_delete.append((idx, row))
+                    
+                    # Show the expired record before deletion
+                    st.markdown("### פרטי הרשומה שפג תוקפה:")
+                    display_person_details(row)
+                else:
+                    # Show valid record
+                    st.markdown("### פרטי האדם:")
+                    display_person_details(row)
+            
+            # Delete expired rows
+            if rows_to_delete:
+                if st.button(f"🗑️ אשר מחיקת {len(rows_to_delete)} רשומות שפג תוקפן", type="secondary"):
+                    deleted_count = 0
+                    # Sort in reverse order to delete from bottom to top (preserves row numbers)
+                    for idx, row in sorted(rows_to_delete, reverse=True):
+                        if delete_row_from_sheet(worksheet, idx):
+                            deleted_count += 1
+                    
+                    if deleted_count > 0:
+                        st.success(f"✅ נמחקו {deleted_count} רשומות שפג תוקפן")
+                        st.cache_data.clear()
+                        st.rerun()
+                    else:
+                        st.error("❌ לא הצלחנו למחוק את הרשומות")
 
 if __name__ == "__main__":
     main()
